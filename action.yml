@@ -1,6 +1,6 @@
 # action.yml
-name: "Run RepoAgent Action"
-description: "An action to set up PDM, install dependencies, and run RepoAgent with configurable environment variables."
+name: "Run RepoAgent"
+description: "An action to run RepoAgent, generate project documentation, and commit changes with configurable environment variables."
 author: "Arno Edwards"
 
 branding:
