@@ -63,7 +63,7 @@ steps:
 | `max_thread_count` | Maximum number of threads to use during processing                                            | No       | `4`                            |
 | `log_level`        | Log level for logging information (e.g., `INFO`, `DEBUG`, `ERROR`)                           | No       | `INFO`                         |
 
-## Example Workflow
+## Example Workflow with example secrets
 
 ```yaml
 # .github/workflows/run-repoagent.yml
@@ -90,3 +90,5 @@ jobs:
           openai_base_url: "${{ secrets.OPENAI_BASE_URL }}"
           openai_api_key: "${{ secrets.OPENAI_API_KEY }}"
 ```
+
+![image](https://github.com/user-attachments/assets/12d07901-2c1e-4c70-b3b5-4174c600c6a6)
