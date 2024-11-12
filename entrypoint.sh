@@ -58,10 +58,14 @@ repoagent run || { echo "RepoAgent run failed"; exit 1; }
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
 
+# Stage all changes, including new files
+git add .
+
 # Check if there are staged changes to commit
 if git diff --cached --quiet; then
   echo "No changes to commit."
 else
+  # Commit and push steps as before
   if git commit -m "chore(repoagent): automated changes by RepoAgent Action"; then
     echo "Changes committed."
 
