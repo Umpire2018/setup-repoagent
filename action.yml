@@ -14,52 +14,40 @@ inputs:
   openai_base_url:
     description: "The base URL for OpenAI API"
     required: false
-    default: "https://api.openai.com/v1"
   openai_api_key:
     description: "The API key for OpenAI API"
     required: true
   model:
     description: "Model name to use for LLM, such as 'gpt-4o-mini'"
     required: false
-    default: "gpt-4o-mini"
   temperature:
     description: "Sampling temperature for generating responses. Lower values make the model more deterministic."
     required: false
-    default: "0.2"
   request_timeout:
     description: "Maximum request timeout in seconds for each API call"
     required: false
-    default: "60"
   target_repo:
     description: "Directory path for the target repository to analyze"
     required: false
-    default: "${{ github.workspace }}"  
   hierarchy_name:
     description: "The name of the directory to store project documentation records"
     required: false
-    default: ".project_doc_record"
   markdown_docs_name:
     description: "The directory name where markdown documentation is stored"
     required: false
-    default: "markdown_docs"
   ignore_list:
     description: "List of file paths to ignore during analysis"
     required: false
-    default: "[]"
   language:
     description: "The language to use for generated documentation"
     required: false
-    default: "English"
   max_thread_count:
     description: "Maximum number of threads to use during processing"
     required: false
-    default: "4"
   log_level:
     description: "Log level for logging information (e.g., INFO, DEBUG, ERROR)"
     required: false
-    default: "INFO"
-
 
 runs:
   using: "docker"
-  image: "Dockerfile"
+  image: "docker://ghcr.io/umpire2018/setup-repoagent:main"

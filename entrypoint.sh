@@ -5,18 +5,20 @@ set -e
 echo "Starting RepoAgent Action..."
 
 # Set environment variables from GitHub Action inputs
-export OPENAI_BASE_URL="${INPUT_OPENAI_BASE_URL}"
+source defaults.env
+
+export OPENAI_BASE_URL="${INPUT_OPENAI_BASE_URL:-$OPENAI_BASE_URL}"
 export OPENAI_API_KEY="${INPUT_OPENAI_API_KEY}"
-export MODEL="${INPUT_MODEL}"
-export TEMPERATURE="${INPUT_TEMPERATURE}"
-export REQUEST_TIMEOUT="${INPUT_REQUEST_TIMEOUT}"
-export TARGET_REPO="${INPUT_TARGET_REPO}"
-export HIERARCHY_NAME="${INPUT_HIERARCHY_NAME}"
-export MARKDOWN_DOCS_NAME="${INPUT_MARKDOWN_DOCS_NAME}"
-export IGNORE_LIST="${INPUT_IGNORE_LIST}"
-export LANGUAGE="${INPUT_LANGUAGE}"
-export MAX_THREAD_COUNT="${INPUT_MAX_THREAD_COUNT}"
-export LOG_LEVEL="${INPUT_LOG_LEVEL}"
+export MODEL="${INPUT_MODEL:-$MODEL}"
+export TEMPERATURE="${INPUT_TEMPERATURE:-$TEMPERATURE}"
+export REQUEST_TIMEOUT="${INPUT_REQUEST_TIMEOUT:-$REQUEST_TIMEOUT}"
+export TARGET_REPO="${INPUT_TARGET_REPO:-${GITHUB_WORKSPACE:-$TARGET_REPO}}"
+export HIERARCHY_NAME="${INPUT_HIERARCHY_NAME:-$HIERARCHY_NAME}"
+export MARKDOWN_DOCS_NAME="${INPUT_MARKDOWN_DOCS_NAME:-$MARKDOWN_DOCS_NAME}"
+export IGNORE_LIST="${INPUT_IGNORE_LIST:-$IGNORE_LIST}"
+export LANGUAGE="${INPUT_LANGUAGE:-$LANGUAGE}"
+export MAX_THREAD_COUNT="${INPUT_MAX_THREAD_COUNT:-$MAX_THREAD_COUNT}"
+export LOG_LEVEL="${INPUT_LOG_LEVEL:-$LOG_LEVEL}"
 
 # Clone the RepoAgent repository refactor branch into a temporary directory
 echo "Cloning RepoAgent repository into a temporary directory..."
@@ -46,7 +48,6 @@ echo "Activated virtual environment: $(which python)"
 pip install dist/*.whl || { echo "Failed to install package"; exit 1; }
 
 # Set the target repository path and configure Git safe directory setting
-export TARGET_REPO="${GITHUB_WORKSPACE}"
 git config --global --add safe.directory "${TARGET_REPO}"
 
 # Run RepoAgent in the target repository
