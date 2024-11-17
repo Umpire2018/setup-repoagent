@@ -21,7 +21,7 @@ export LOG_LEVEL="${INPUT_LOG_LEVEL}"
 # Clone the RepoAgent repository refactor branch into a temporary directory
 echo "Cloning RepoAgent repository into a temporary directory..."
 TEMP_DIR=$(mktemp -d)
-git clone --branch refactor https://github.com/Umpire2018/RepoAgent.git "$TEMP_DIR"
+git clone --branch feature/github-actions-integration https://github.com/OpenBMB/RepoAgent.git "$TEMP_DIR"
 
 # Set up PDM and build dependencies
 echo "Setting up PDM and installing dependencies..."
