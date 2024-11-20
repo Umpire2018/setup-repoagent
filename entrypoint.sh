@@ -5,25 +5,13 @@ set -e
 echo "Starting RepoAgent Action..."
 
 # Set environment variables from GitHub Action inputs
-export OPENAI_BASE_URL="${INPUT_OPENAI_BASE_URL}"
 export OPENAI_API_KEY="${INPUT_OPENAI_API_KEY}"
-export MODEL="${INPUT_MODEL}"
-export TEMPERATURE="${INPUT_TEMPERATURE}"
-export REQUEST_TIMEOUT="${INPUT_REQUEST_TIMEOUT}"
-export TARGET_REPO="${INPUT_TARGET_REPO}"
-export HIERARCHY_NAME="${INPUT_HIERARCHY_NAME}"
-export MARKDOWN_DOCS_NAME="${INPUT_MARKDOWN_DOCS_NAME}"
-export IGNORE_LIST="${INPUT_IGNORE_LIST}"
-export LANGUAGE="${INPUT_LANGUAGE}"
-export MAX_THREAD_COUNT="${INPUT_MAX_THREAD_COUNT}"
-export LOG_LEVEL="${INPUT_LOG_LEVEL}"
 
 # Clone the RepoAgent repository refactor branch into a temporary directory
 echo "Cloning RepoAgent repository into a temporary directory..."
-TEMP_DIR=$(mktemp -d)
-git clone --branch feature/github-actions-integration https://github.com/OpenBMB/RepoAgent.git "$TEMP_DIR"
+TEMP_DIR=$(mktemp -d) || { echo "Failed to create temporary directory"; exit 1; }
+git clone https://github.com/OpenBMB/RepoAgent.git "$TEMP_DIR"
 
-# Set up PDM and build dependencies
 echo "Setting up PDM and installing dependencies..."
 cd "$TEMP_DIR"
 pdm build --dest /action/dist || { echo "PDM build failed"; exit 1; }
@@ -52,29 +40,56 @@ git config --global --add safe.directory "${TARGET_REPO}"
 # Run RepoAgent in the target repository
 echo "Running RepoAgent with TARGET_REPO set to ${TARGET_REPO}..."
 cd "${TARGET_REPO}"
-repoagent run || { echo "RepoAgent run failed"; exit 1; }
+
+command="repoagent run"
+command+=" --base-url ${INPUT_OPENAI_BASE_URL}"
+command+=" --model ${INPUT_MODEL}"
+command+=" --temperature ${INPUT_TEMPERATURE}"
+command+=" --request-timeout ${INPUT_REQUEST_TIMEOUT}"
+command+=" --hierarchy-path ${INPUT_HIERARCHY_PATH}"
+command+=" --markdown-docs-path ${INPUT_MARKDOWN_DOCS_PATH}"
+command+=" --ignore-list ${INPUT_IGNORE_LIST}"
+command+=" --language ${INPUT_LANGUAGE}"
+command+=" --max-thread-count ${INPUT_MAX_THREAD_COUNT}"
+command+=" --log-level ${INPUT_LOG_LEVEL}"
+
+# Add the --print-hierarchy parameter only if INPUT_PRINT_HIERARCHY is "true"
+if [[ "${INPUT_PRINT_HIERARCHY}" == "true" ]]; then
+  command+=" --print-hierarchy"
+fi
+
+echo "Running: $command"
+eval $command || { echo "RepoAgent run failed"; exit 1; }
 
 # Set Git user identity for committing changes in CI environment
 git config --global user.email "action@github.com"
 git config --global user.name "GitHub Action"
 
-# Stage all changes, including new files
+# Commit changes
 git add .
-
-# Check if there are staged changes to commit
 if git diff --cached --quiet; then
   echo "No changes to commit."
 else
-  # Commit and push steps as before
   if git commit -m "chore(repoagent): automated changes by RepoAgent Action"; then
     echo "Changes committed."
 
-    # Pull the latest changes to avoid conflicts before pushing
-    echo "Pulling latest changes from the remote repository..."
-    git pull --rebase origin "$(git rev-parse --abbrev-ref HEAD)"
+    # Pull latest changes and handle conflicts automatically
+    export GIT_MERGE_AUTOEDIT=no
+    if ! git pull --rebase origin "$(git rev-parse --abbrev-ref HEAD)"; then
+      echo "Conflict detected. Resolving conflicts automatically..."
+
+      # Resolve conflicts for specified directories using environment variables
+      git checkout --ours "${INPUT_HIERARCHY_PATH}" 
+      git checkout --ours "${INPUT_MARKDOWN_DOCS_PATH}"
+
+      # Mark conflicts as resolved
+      git add "${INPUT_HIERARCHY_PATH}" "${INPUT_MARKDOWN_DOCS_PATH}"
+
+      # Continue the rebase
+      GIT_EDITOR=true git rebase --continue || { echo "Failed to continue rebase after resolving conflicts."; exit 1; }
+    fi
 
     # Push changes to the remote repository
-    echo "Pushing changes to the repository..."
     if git push origin "$(git rev-parse --abbrev-ref HEAD)"; then
       echo "Changes pushed successfully."
     else
