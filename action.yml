@@ -34,12 +34,12 @@ inputs:
     description: "Directory path for the target repository to analyze"
     required: false
     default: "${{ github.workspace }}"  
-  hierarchy_name:
-    description: "The name of the directory to store project documentation records"
+  hierarchy_path:
+    description: "The path of the directory to store project documentation records"
     required: false
     default: ".project_doc_record"
-  markdown_docs_name:
-    description: "The directory name where markdown documentation is stored"
+  markdown_docs_path:
+    description: "The directory path where markdown documentation is stored"
     required: false
     default: "markdown_docs"
   ignore_list:
@@ -58,7 +58,10 @@ inputs:
     description: "Log level for logging information (e.g., INFO, DEBUG, ERROR)"
     required: false
     default: "INFO"
-
+  print_hierarchy:
+    description: "If set, prints the hierarchy of the target repository when finished running the main task."
+    required: false
+    default: "false"
 
 runs:
   using: "docker"
