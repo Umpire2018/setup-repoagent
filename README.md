@@ -46,22 +46,23 @@ steps:
         openai_api_key: "${{ secrets.OPENAI_API_KEY }}"
 ```
 
-## Action Inputs
+## **Action Inputs**
 
-| Name               | Description                                                                                   | Required | Default                        |
-|--------------------|-----------------------------------------------------------------------------------------------|----------|--------------------------------|
-| `openai_base_url`  | The base URL for OpenAI API                                                                   | No       | `https://api.openai.com/v1`    |
-| `openai_api_key`   | The API key for OpenAI API                                                                    | Yes      | -                              |
-| `model`            | Model name to use for LLM, such as `gpt-4o-mini`                                              | No       | `gpt-4o-mini`                  |
-| `temperature`      | Sampling temperature for generating responses. Lower values make the model more deterministic | No       | `0.2`                          |
-| `request_timeout`  | Maximum request timeout in seconds for each API call                                          | No       | `60`                           |
-| `target_repo`      | Directory path for the target repository to analyze                                           | No       | `${{ github.workspace }}`      |
-| `hierarchy_name`   | The name of the directory to store project documentation records                              | No       | `.project_doc_record`          |
-| `markdown_docs_name` | The directory name where markdown documentation is stored                                   | No       | `markdown_docs`                |
-| `ignore_list`      | List of file paths to ignore during analysis                                                  | No       | `[]`                           |
-| `language`         | The language to use for generated documentation                                               | No       | `English`                      |
-| `max_thread_count` | Maximum number of threads to use during processing                                            | No       | `4`                            |
-| `log_level`        | Log level for logging information (e.g., `INFO`, `DEBUG`, `ERROR`)                           | No       | `INFO`                         |
+| Name                 | Description                                                                                   | Required | Default                        |
+|----------------------|-----------------------------------------------------------------------------------------------|----------|--------------------------------|
+| `openai_base_url`    | The base URL for OpenAI API                                                                   | No       | `https://api.openai.com/v1`    |
+| `openai_api_key`     | The API key for OpenAI API                                                                    | Yes      | -                              |
+| `model`              | Model name to use for LLM, such as `gpt-4o-mini`                                              | No       | `gpt-4o-mini`                  |
+| `temperature`        | Sampling temperature for generating responses. Lower values make the model more deterministic | No       | `0.2`                          |
+| `request_timeout`    | Maximum request timeout in seconds for each API call                                          | No       | `60`                           |
+| `target_repo`        | Directory path for the target repository to analyze                                           | No       | `${{ github.workspace }}`      |
+| `hierarchy_path`     | The path of the directory to store project documentation records                              | No       | `.project_doc_record`          |
+| `markdown_docs_path` | The directory path where markdown documentation is stored                                     | No       | `markdown_docs`                |
+| `ignore_list`        | List of file paths to ignore during analysis                                                  | No       | `[]`                           |
+| `language`           | The language to use for generated documentation                                               | No       | `English`                      |
+| `max_thread_count`   | Maximum number of threads to use during processing                                            | No       | `4`                            |
+| `log_level`          | Log level for logging information (e.g., `INFO`, `DEBUG`, `ERROR`)                           | No       | `INFO`                         |
+| `print_hierarchy`    | If set to `true`, prints the hierarchy of the target repository after the main task finishes  | No       | `false`                        |
 
 ## Example Workflow with example secrets
 
